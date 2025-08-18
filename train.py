@@ -160,7 +160,7 @@ def train(epoch, model, discriminator, encoder_optimizer, decoder_optimizer, D_o
         for _ in range(args.g_steps_per_iter):
 
             z = torch.randn(x.size(0), args.latent_dim, device=x.device)
-            z_fake, x_fake, z_fake_mean = model(x, z)
+            z_fake, x_fake, z_fake_mean, log_det= model(x, z)
          
             
 
@@ -176,7 +176,7 @@ def train(epoch, model, discriminator, encoder_optimizer, decoder_optimizer, D_o
                 sup_loss = celoss(label_z, label)
             else:
                 sup_loss = torch.zeros([1], device=device)
-            loss_encoder = loss_encoder + sup_loss * args.sup_coef-log_det
+            loss_encoder = loss_encoder + sup_loss * args.sup_coef-alpha*log_det
             loss_encoder.backward()
             encoder_optimizer.step()
 
